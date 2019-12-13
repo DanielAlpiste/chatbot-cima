@@ -8,9 +8,11 @@ from sqlalchemy.exc import SQLAlchemyError
 class Consult(Resource):
 	def post(self):
 		d = request.get_json(force=True)
+		print(d)
 		if not d:
 			response = {'user': 'No input data provided'}
 			return response, status.HTTP_400_BAD_REQUEST
+		return
 		#
 		#action = d.get('queryResult').get('action')
 		#if(action == 'consultar_precio'):
