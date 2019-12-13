@@ -1,4 +1,4 @@
-from app import db, ma
+from app import db
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 from wtforms.validators import Email, Length
 from sqlalchemy import *
