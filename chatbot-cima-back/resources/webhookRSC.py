@@ -8,15 +8,24 @@ from controllers import cimaEnterpriseCTL
 class Consult(Resource):
 	def post(self):
 		d = request.get_json(force=True)
-		action = d.get('queryResult').get('action')
 		if not d:
 			response = {'user': 'No input data provided'}
 			return response, status.HTTP_400_BAD_REQUEST
-		
+
+		action = d.get('queryResult').get('action')
+
 		if(action == 'validacion_documento'):
 			tipoDocumento = d.get('queryResult').get('parameters').get('tipo_documento')
 			numDocumento = d.get('queryResult').get('parameters').get('numero_documento')
+			print('validar documento')
 			msg = cimaEnterpriseCTL.validateDocument(tipoDocumento, numDocumento)
+		
+		elif(action == 'validacion_correo'):
+			tipoDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('tipo_documento')
+			numDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('numero_documento.original')
+			print('validar correo')
+			msg = cimaEnterpriseCTL.validateEmail(tipoDocumento, numDocumento)
+		
 		return  make_response(jsonify(msg))
 		#
 		#
