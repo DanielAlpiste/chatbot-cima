@@ -3,20 +3,9 @@ from app import db
 
 from models.cima_enterprise import CIMA_Enterprise
 
-def returnPrize(nameOfFlower):
-	prize = Products.query.filter(Products.name == nameOfFlower).first().prize
-	str = 'Una ' + nameOfFlower + ' cuesta: S/.' + "{:.2f}".format(prize) + '. Desea alguna?'
+def validateDocument(tipoDocumento, numDocumento):
+	#prize = Products.query.filter(Products.name == nameOfFlower).first().prize
+	str = 'Que tal senor Daniel Alpiste. Usted si se encuentra pre aprobado para un credito con nosotros. Pero necesitamos validar mas su informacion. Me podria decir su tasa?'
 	d = {}
 	d['fulfillmentText'] = str
-	d['prize'] = prize
 	return d
-
-def returPrizeCant(cantidad, nameOfFlower):
-	prize = Products.query.filter(Products.name == nameOfFlower).first().prize
-	prizeTot = cantidad * prize
-	str = 'Eso te estaria costando: S/.' + "{:.2f}".format(prizeTot) + '. Va a querer? Porque esto pesa como mrd'
-	d = {}
-	d['fulfillmentText'] = str
-	d['prize'] = prizeTot
-	return d
-
