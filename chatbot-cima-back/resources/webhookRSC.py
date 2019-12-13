@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 #from controllers import productsCTL
 
 class Consult(Resource):
-	def post(self):
+	def get(self):
 		d = request.get_json(force=True)
 		print(d)
 		if not d:
