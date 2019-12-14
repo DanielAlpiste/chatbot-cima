@@ -2,6 +2,7 @@ from flask_restful import Resource
 from flask import request, jsonify, make_response, g
 import status
 from sqlalchemy.exc import SQLAlchemyError
+import commons
 
 from controllers import cimaEnterpriseCTL
 from controllers import cimaLoanCalendarCTL
@@ -51,6 +52,17 @@ class Consult(Resource):
 			tipoDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('tipo_documento')
 			numDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('numero_documento.original')
 			msg = cimaLoanDebtCTL.consultSMSIssue(tipoDocumento, numDocumento)
+
+		elif(action == 'consultar_precancelacion'):
+			tipoDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('tipo_documento')
+			numDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('numero_documento.original')
+			msg = cimaLoanCalendarCTL.consultPrecancel(tipoDocumento, numDocumento)
+
+		elif(action == 'conocer_saldo'):
+			tipoDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('tipo_documento')
+			numDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('numero_documento.original')
+			msg = cimaLoanDebtCTL.saldoConocer(tipoDocumento, numDocumento)
+
 		return  make_response(jsonify(msg))
 		#
 		#elif(action == 'decision_cantidad'):

@@ -54,3 +54,15 @@ def consultQuota(tipoDocumento, numDocumento):
 	d = {}
 	d['fulfillmentText'] = msg
 	return d
+
+def consultPrecancel(tipoDocumento, numDocumento):
+	if tipoDocumento=='dni':
+		numDocumento = CIMA_Enterprise.query.filter(CIMA_Enterprise.client_dni == numDocumento).first().ruc
+	cuotasFaltantes = CIMA_Loan_Calendar.query.filter(CIMA_Loan_Calendar.status == 'PENDING', CIMA_Loan_Calendar.document_number == numDocumento).order_by(CIMA_Loan_Calendar.payment_date.asc()).all()
+	if(len(cuotasFaltantes)==1):
+		msg = 'Veo en el sistema que esta es tu última cuota :D ¡Eso quiere decir que puedes precancelarla y verificar si calificas para un nuevo crédito directamente desde nuestra web! Ingresa a www.cima.pe de inmediato para que puedas realizar este proceso :D'
+	else:
+		msg = 'Pues esta no es tu última cuota. Eso quiere decir que, si quieres precancelar, tienes que acercarte a tu tienda Interbank más cercana y decir que quieres adelantar el pago de la operación número ' + str(cuotasFaltantes[0].credit_code) + ' :)'
+	d = {}
+	d['fulfillmentText'] = msg
+	return d

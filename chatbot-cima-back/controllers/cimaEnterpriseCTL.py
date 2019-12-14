@@ -23,7 +23,7 @@ def validateEmail(tipoDocumento, numDocumento):
 		persona = CIMA_Enterprise.query.filter(CIMA_Enterprise.client_dni == numDocumento).first()
 	elif(tipoDocumento == 'ruc'):
 		persona = CIMA_Enterprise.query.filter(CIMA_Enterprise.ruc == numDocumento).first()
-	str = '¡Si eras tú ' + persona.client_first_name + '! :D Que bueno tenerte de vuelta por este chat. ¿En qué puedo ayudarte?'
+	str = '¡Si eras tú ' + persona.client_first_name + '! :) Que bueno tenerte de vuelta por este chat. ¿En qué puedo ayudarte?'
 	d = {}
 	d['fulfillmentText'] = str
 	return d
