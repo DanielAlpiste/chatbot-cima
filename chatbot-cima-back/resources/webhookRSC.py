@@ -47,6 +47,10 @@ class Consult(Resource):
 			numDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('numero_documento.original')
 			msg = cimaLoanDebtCTL.consultPaidAndNotPaid(tipoDocumento, numDocumento)
 
+		elif(action == 'conocer_motivo_SMS'):
+			tipoDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('tipo_documento')
+			numDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('numero_documento.original')
+			msg = cimaLoanDebtCTL.consultSMSIssue(tipoDocumento, numDocumento)
 		return  make_response(jsonify(msg))
 		#
 		#elif(action == 'decision_cantidad'):

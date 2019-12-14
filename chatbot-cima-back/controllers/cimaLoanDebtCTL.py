@@ -35,3 +35,28 @@ def consultPaidAndNotPaid(tipoDocumento, numDocumento):
 		d = {}
 		d['fulfillmentText'] = msg
 		return d
+
+def consultSMSIssue(tipoDocumento, numDocumento):
+	if tipoDocumento=='dni':
+		numDocumento = CIMA_Enterprise.query.filter(CIMA_Enterprise.client_dni == numDocumento).first().ruc
+	
+	numCredito = CIMA_Loan_Calendar.query.filter(CIMA_Loan_Calendar.document_number == numDocumento, CIMA_Loan_Calendar.status == 'PENDING', CIMA_Loan_Calendar.payment_date < datetime.datetime.now()).order_by(CIMA_Loan_Calendar.payment_date.desc()).first()
+	print(numCredito)
+	if(numCredito is None):
+		msg = '¡No tienes ninguna deuda pendiente! Es muy raro que se te haya enviado ese mensaje. En todo caso comunicate con mi amiga, la Ejecutiva de Negocios CIMA, Ross :P Su numero es: 967769873.'
+		d = {}
+		d['fulfillmentText'] = msg
+		return d
+	else:
+		numCredito = numCredito.credit_code
+		cuotasVencidas = CIMA_Loan_Calendar.query.filter(CIMA_Loan_Calendar.credit_code == numCredito, CIMA_Loan_Calendar.document_number == numDocumento, CIMA_Loan_Calendar.status == 'PENDING', CIMA_Loan_Calendar.payment_date < datetime.datetime.now()).subquery()
+		listaCuotasVencidas = db.session.query(CIMA_Loan_Debt).join(cuotasVencidas, cuotasVencidas.c.quota_order == CIMA_Loan_Debt.quota_order).filter(CIMA_Loan_Debt.credit_code == numCredito).order_by(CIMA_Loan_Debt.quota_order.asc()).all()
+		msg = 'Pues tienes ' + str(len(listaCuotasVencidas))
+		if(len(listaCuotasVencidas) > 1):
+			msg += ' cuotas vencidas :('
+		else:
+			msg += ' cuota vencida :('
+		msg += ' Sucede que aqui en CIMA enviamos mensajes de texto cada vez que nuestros clientes tienen una o mas deudas vencidas. Si la informacion que te acabo de decir es erronea, comunicate con mi amiga, la Ejecutiva de Negocios CIMA, Ross :P Su numero es: 967769873.'
+		d = {}
+		d['fulfillmentText'] = msg
+		return d
