@@ -1,4 +1,6 @@
 from app import create_app
+import locale
+locale.setlocale(locale.LC_TIME, '')
 
 app = create_app('config')
 
