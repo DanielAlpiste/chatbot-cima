@@ -64,6 +64,7 @@ class Consult(Resource):
 			msg = cimaLoanDebtCTL.saldoConocer(tipoDocumento, numDocumento)
 
 		return  make_response(jsonify(msg))
+		
 		#
 		#elif(action == 'decision_cantidad'):
 		#	cantidad = d.get('queryResult').get('parameters').get('cantidad')
