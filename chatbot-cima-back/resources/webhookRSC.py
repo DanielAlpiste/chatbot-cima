@@ -5,9 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 import commons
 from app import db
 
-from controllers import cimaEnterpriseCTL
-from controllers import cimaLoanCalendarCTL
-from controllers import cimaLoanDebtCTL
+from controllers import preventaCTL
 
 class Consult(Resource):
 	def post(self):
@@ -18,12 +16,14 @@ class Consult(Resource):
 
 		action = d.get('queryResult').get('action')
 
-		if(action == 'action-oferta'):
-			query = db.engine.execute("SELECT b.document_type AS 'tipo_documento', b.document_number AS 'nro_documento', a.email FROM business b JOIN account_business ab on ab.business_id = b.id JOIN account a on a.id = ab.account_id JOIN user u on a.user_id = u.id WHERE document_number = '20601454999' AND document_type ='RUC'")
-			msg = ''
-			for row in query:
-				msg = row['email']
-				print(msg)
+		if(action == 'action-numero-documento'):
+			documento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
+			resp = preventaCTL.verificarNumeroDocumento(documento)
+		
+		#if (action == 'action-verificar-email'):
+
+		
+		return  make_response(jsonify(resp))
 			#msg = cimaEnterpriseCTL.validateDocument(tipoDocumento, numDocumento)
 		
 		#elif(action == 'validacion_correo'):
@@ -66,9 +66,8 @@ class Consult(Resource):
 		#	tipoDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('tipo_documento')
 		#	numDocumento = d.get('queryResult').get('outputContexts')[0].get('parameters').get('numero_documento.original')
 		#	msg = cimaLoanDebtCTL.saldoConocer(tipoDocumento, numDocumento)
-		d = {}
-		d['fulfillmentText'] = msg
-		return  make_response(jsonify(d))
+
+		
 		
 		#
 		#elif(action == 'decision_cantidad'):
