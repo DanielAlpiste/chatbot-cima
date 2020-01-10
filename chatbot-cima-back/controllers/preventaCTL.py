@@ -30,15 +30,16 @@ def verificarOferta(ruc):
 	#si tiene una oferta aprobada
 	result = db.engine.execute(query_aprobado.replace('$RUC',ruc))
 	if (result is not None):
-		msg = 'Cuentas con una oferta de hasta S/.' + result[0]['maximum_capital_amount']
+		msg = '¡Felicitaciones! Cuentas con una oferta de hasta S/.' + str(round(result[0]['maximum_capital_amount'])).rstrip('0').rstrip('.') + ' . Ingresa a https://cima.pe/login para realizar tu desembolso'
+
 	else:
 		result = db.engine.execute(query_preaprobado.replace('$RUC',ruc))
 		#si tiene una oferta preaprobada
 		if (result is not None):
-			msg = 'Cuentas con una oferta preaprobada, ingresa/registrate a cima para verla'
+			msg = '¡Felicitaciones! Cuentas con una oferta preaprobada, ingresa/registrate a cima para validar tus datos y puedas acceder al crédito CIMA: https://cima.pe/credito-pos'
 		else:
 			#si no tiene ninguna oferta
-			msg = 'Actualmente no cuentas con una oferta'
+			msg = 'Actualmente no cuentas con una oferta en CIMA, pronto nos estaremos comunicando contigo cuando tengas un crédito disponible con nosotros'
 	
 	d = {}
 	d['fulfillmentText'] = msg
