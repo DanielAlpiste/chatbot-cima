@@ -16,7 +16,7 @@ PAGINATION_PAGE_SIZE = 5
 """
 """
 
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://acelerathon-cima:KGKMHfM388baAGFUcFv8@108.59.81.200:3306/acelerathon_cima'
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://usuario_consulta:nBw4mT3bpTsXUb2W@35.226.45.124:3306/cima_prod_db'
 #SQLALCHEMY_POOL_SIZE = 5
 #SQLALCHEMY_POOL_TIMEOUT = 30
 #SQLALCHEMY_POOL_RECYCLE = 31
