@@ -31,7 +31,7 @@ def verificarOferta(documento):
 	result = db.engine.execute(query_aprobado.replace('$RUC',ruc))
 	if (len(result) > 0):
 		msg = 'Cuentas con una oferta de hasta S/.' + result[0]['maximum_capital_amount']
-	else if:
+	else:
 		result = db.engine.execute(query_preaprobado.replace('$RUC',ruc))
 		#si tiene una oferta preaprobada
 		if (len(result) > 0):
