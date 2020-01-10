@@ -28,12 +28,12 @@ def verificarOferta(ruc):
 	query_preaprobado = "SELECT ruc AS 'nro_documento', business_name AS 'razon_social',suitable AS 'pre_califica', final_rate AS 'tasa_interes' FROM ibk_data WHERE ruc = '$RUC';"
 
 	#si tiene una oferta aprobada
-	result = db.engine.execute(query_aprobado.replace('$RUC',ruc))
+	result = db.engine.execute(query_aprobado.replace('$RUC',ruc)).first()
 	if (result is not None):
-		msg = '¡Felicitaciones! Cuentas con una oferta de hasta S/.' + str(round(result[0]['maximum_capital_amount'])).rstrip('0').rstrip('.') + ' . Ingresa a https://cima.pe/login para realizar tu desembolso'
+		msg = '¡Felicitaciones! Cuentas con una oferta de hasta S/.' + str(round(result['oferta_maxima'])).rstrip('0').rstrip('.') + ' . Ingresa a https://cima.pe/login para realizar tu desembolso'
 
 	else:
-		result = db.engine.execute(query_preaprobado.replace('$RUC',ruc))
+		result = db.engine.execute(query_preaprobado.replace('$RUC',ruc)).first()
 		#si tiene una oferta preaprobada
 		if (result is not None):
 			msg = '¡Felicitaciones! Cuentas con una oferta preaprobada, ingresa/registrate a cima para validar tus datos y puedas acceder al crédito CIMA: https://cima.pe/credito-pos'
@@ -48,11 +48,11 @@ def verificarOferta(ruc):
 def problemaInscripcion(documento):
 	query_registrado = "SELECT b.document_type AS 'tipo_documento',b.document_number AS 'nro_documento',a.email FROM business b JOIN account_business ab on ab.business_id = b.id JOIN account a on a.id = ab.account_id JOIN user u on a.user_id = u.id WHERE document_number = '$RUC'"
 
-	result = db.engine.execute(query_registrado.replace('$RUC',ruc))
+	result = db.engine.execute(query_registrado.replace('$RUC',ruc)).first()
 	if (result is not None > 0):
-		msg = 'Recuerda ingresar correctamente tu correo: ' + result[0]['email'] + ' (sin espacios) desde el siguiente link: https://cima.pe/login. En caso contrario puedes restaurar tu contraseña desde este link: https://cima.pe/forgot-password'
+		msg = 'Recuerda ingresar correctamente tu correo: ' + result['email'] + ' (sin espacios) desde el siguiente link: https://cima.pe/login. En caso contrario puedes restaurar tu contraseña desde este link: https://cima.pe/forgot-password'
 	else:
-		msg = 'Al parecer no te has registrado en cima con el correo ' + result[0]['email'] +'. Revisa que este sea el correo correcto (sin espacios). Caso contrario puedes registrarte desde https://cima.pe/credito-pos'
+		msg = 'Al parecer no te has registrado en cima con el correo ' + result['email'] +'. Revisa que este sea el correo correcto (sin espacios). Caso contrario puedes registrarte desde https://cima.pe/credito-pos'
 	
 	d = {}
 	d['fulfillmentText'] = msg
@@ -61,11 +61,11 @@ def problemaInscripcion(documento):
 def problemaLogin(documento):
 	query_registrado = "SELECT b.document_type AS 'tipo_documento',b.document_number AS 'nro_documento',a.email FROM business b JOIN account_business ab on ab.business_id = b.id JOIN account a on a.id = ab.account_id JOIN user u on a.user_id = u.id WHERE document_number = '$RUC'"
 
-	result = db.engine.execute(query_registrado.replace('$RUC',ruc))
+	result = db.engine.execute(query_registrado.replace('$RUC',ruc)).first()
 	if (result is not None > 0):
-		msg = 'Recuerda ingresar correctamente tu correo: '+ result[0]['email'] +'. En caso contrario puedes restaurar tu contraseña desde este link: https://cima.pe/forgot-password'
+		msg = 'Recuerda ingresar correctamente tu correo: '+ result['email'] +'. En caso contrario puedes restaurar tu contraseña desde este link: https://cima.pe/forgot-password'
 	else:
-		msg = 'Al parecer no te has registrado en cima con el correo '+ result[0]['email'] +'. Revisa que este sea el correo correcto (sin espacios). Caso contrario puedes registrarte desde https://cima.pe/credito-pos'
+		msg = 'Al parecer no te has registrado en cima con el correo '+ result['email'] +'. Revisa que este sea el correo correcto (sin espacios). Caso contrario puedes registrarte desde https://cima.pe/credito-pos'
 	
 	d = {}
 	d['fulfillmentText'] = msg
@@ -74,9 +74,9 @@ def problemaLogin(documento):
 def getEjecutiva(documento):
 	query_ejecutiva = "SELECT b.document_type AS 'tipo_documento',b.document_number AS 'nro_documento',e.first_name AS 'nombre_ejecutiva',e.last_name AS 'apellido_ejecutiva',e.phone  AS 'telefono' FROM business b LEFT JOIN user_business ub on b.id = ub.business_id and ub.type_code = 'EXECUTIVE' LEFT JOIN user e on e.id = ub.user_id WHERE document_number = '$RUC'"
 
-	result = db.engine.execute(query_ejecutiva.replace('$RUC',ruc))
+	result = db.engine.execute(query_ejecutiva.replace('$RUC',ruc)).first()
 	if (result is not None > 0):
-		msg = 'Puedes comunicarte con tu ejecutivo(a) ' + result[0]['nombre_ejecutiva'] + ' ' + result[0]['apellido_ejecutiva'] + ' a este número: ' + result[0]['telefono']
+		msg = 'Puedes comunicarte con tu ejecutivo(a) ' + result['nombre_ejecutiva'] + ' ' + result['apellido_ejecutiva'] + ' a este número: ' + result['telefono']
 	else:
 		msg = 'Hola, la comunicación es por este medio. Si necesitas mas información primero regístrate en https://cima.pe/credito-pos para comunicarte con uno de nuestros ejecutivos'
 	
