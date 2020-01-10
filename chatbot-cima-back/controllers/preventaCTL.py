@@ -23,22 +23,61 @@ def verificarEmail(email):
 	d['fulfillmentText'] = msg
 	return d
 
-def verificarOferta(documento):
+def verificarOferta(ruc):
 	query_aprobado = "SELECT bs.document_number AS 'nro_documento', clo.period_in_months AS 'numero_cuotas_maxima', clo.withholding AS 'porcentaje_retencion', clo.base_interest_rate AS 'tasa_interes', clo.monthly_fee AS 'cuota_mensual_maxima',clo.maximum_capital_amount AS 'oferta_maxima' FROM business bs JOIN catalog ca ON bs.id = ca.business_id JOIN catalog_item ci ON ca.id = ci.catalog_id JOIN offer clo  ON ci.id = clo.catalog_item_id WHERE bs.document_number = '$RUC' AND clo.status ='OFFERED' ORDER BY clo.created_date ASC LIMIT 1"
 	query_preaprobado = "SELECT ruc AS 'nro_documento', business_name AS 'razon_social',suitable AS 'pre_califica', final_rate AS 'tasa_interes' FROM ibk_data WHERE ruc = '$RUC';"
 
 	#si tiene una oferta aprobada
 	result = db.engine.execute(query_aprobado.replace('$RUC',ruc))
-	if (len(result) > 0):
+	if (result is not None):
 		msg = 'Cuentas con una oferta de hasta S/.' + result[0]['maximum_capital_amount']
 	else:
 		result = db.engine.execute(query_preaprobado.replace('$RUC',ruc))
 		#si tiene una oferta preaprobada
-		if (len(result) > 0):
+		if (result is not None):
 			msg = 'Cuentas con una oferta preaprobada, ingresa/registrate a cima para verla'
 		else:
 			#si no tiene ninguna oferta
 			msg = 'Actualmente no cuentas con una oferta'
+	
+	d = {}
+	d['fulfillmentText'] = msg
+	return d
+
+def problemaInscripcion(documento):
+	query_registrado = "SELECT b.document_type AS 'tipo_documento',b.document_number AS 'nro_documento',a.email FROM business b JOIN account_business ab on ab.business_id = b.id JOIN account a on a.id = ab.account_id JOIN user u on a.user_id = u.id WHERE document_number = '$RUC'"
+
+	result = db.engine.execute(query_registrado.replace('$RUC',ruc))
+	if (result is not None > 0):
+		msg = 'Recuerda ingresar correctamente tu correo: ' + result[0]['email'] + ' (sin espacios) desde el siguiente link: https://cima.pe/login. En caso contrario puedes restaurar tu contraseña desde este link: https://cima.pe/forgot-password'
+	else:
+		msg = 'Al parecer no te has registrado en cima con el correo ' + result[0]['email'] +'. Revisa que este sea el correo correcto (sin espacios). Caso contrario puedes registrarte desde https://cima.pe/credito-pos'
+	
+	d = {}
+	d['fulfillmentText'] = msg
+	return d
+
+def problemaLogin(documento):
+	query_registrado = "SELECT b.document_type AS 'tipo_documento',b.document_number AS 'nro_documento',a.email FROM business b JOIN account_business ab on ab.business_id = b.id JOIN account a on a.id = ab.account_id JOIN user u on a.user_id = u.id WHERE document_number = '$RUC'"
+
+	result = db.engine.execute(query_registrado.replace('$RUC',ruc))
+	if (result is not None > 0):
+		msg = 'Recuerda ingresar correctamente tu correo: '+ result[0]['email'] +'. En caso contrario puedes restaurar tu contraseña desde este link: https://cima.pe/forgot-password'
+	else:
+		msg = 'Al parecer no te has registrado en cima con el correo '+ result[0]['email'] +'. Revisa que este sea el correo correcto (sin espacios). Caso contrario puedes registrarte desde https://cima.pe/credito-pos'
+	
+	d = {}
+	d['fulfillmentText'] = msg
+	return d
+
+def getEjecutiva(documento):
+	query_ejecutiva = "SELECT b.document_type AS 'tipo_documento',b.document_number AS 'nro_documento',e.first_name AS 'nombre_ejecutiva',e.last_name AS 'apellido_ejecutiva',e.phone  AS 'telefono' FROM business b LEFT JOIN user_business ub on b.id = ub.business_id and ub.type_code = 'EXECUTIVE' LEFT JOIN user e on e.id = ub.user_id WHERE document_number = '$RUC'"
+
+	result = db.engine.execute(query_ejecutiva.replace('$RUC',ruc))
+	if (result is not None > 0):
+		msg = 'Puedes comunicarte con tu ejecutivo(a) ' + result[0]['nombre_ejecutiva'] + ' ' + result[0]['apellido_ejecutiva'] + ' a este número: ' + result[0]['telefono']
+	else:
+		msg = 'Hola, la comunicación es por este medio. Si necesitas mas información primero regístrate en https://cima.pe/credito-pos para comunicarte con uno de nuestros ejecutivos'
 	
 	d = {}
 	d['fulfillmentText'] = msg

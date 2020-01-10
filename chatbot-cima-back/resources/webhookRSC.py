@@ -30,6 +30,20 @@ class Consult(Resource):
 			ruc = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
 			resp = preventaCTL.verificarOferta(ruc)
 
-					
-	
+		if(action == 'action-oferta'):
+			ruc = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
+			resp = preventaCTL.verificarOferta(ruc)
+
+		if(action=='action-problema-inscripcion'):
+			ruc = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
+			resp = preventaCTL.problemaInscripcion(ruc)
+
+		if(action=='action-problema-login'):
+			ruc = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
+			resp = preventaCTL.problemaLogin(ruc)
+
+		if(action=='action-numero-telefonico'):
+			ruc = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
+			resp = preventaCTL.getEjecutiva(ruc)
+
 		return  make_response(jsonify(resp))
