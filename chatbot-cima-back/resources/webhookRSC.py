@@ -13,10 +13,6 @@ class Consult(Resource):
 		if not d:
 			response = {'user': 'No input data provided'}
 			return response, status.HTTP_400_BAD_REQUEST
-
-		ruc = ''
-		telefono = ''
-		msg = ''
 		
 		action = d.get('queryResult').get('action')
 
@@ -25,10 +21,6 @@ class Consult(Resource):
 			resp = preventaCTL.verificarNumeroDocumento(ruc)
 		
 		#if (action == 'action-verificar-email'):
-
-		if(action == 'action-oferta'):
-			ruc = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
-			resp = preventaCTL.verificarOferta(ruc)
 
 		if(action == 'action-oferta'):
 			ruc = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
@@ -46,4 +38,5 @@ class Consult(Resource):
 			ruc = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
 			resp = preventaCTL.getEjecutiva(ruc)
 
+	
 		return  make_response(jsonify(resp))
