@@ -19,8 +19,6 @@ class Consult(Resource):
 		if(action == 'action-numero-documento'):
 			ruc = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
 			resp = preventaCTL.verificarNumeroDocumento(ruc)
-		
-		#if (action == 'action-verificar-email'):
 
 		if(action == 'action-oferta'):
 			ruc = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
