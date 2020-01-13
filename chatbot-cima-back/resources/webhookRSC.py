@@ -15,7 +15,24 @@ class Consult(Resource):
 			return response, status.HTTP_400_BAD_REQUEST
 		
 		action = d.get('queryResult').get('action')
+		resp = {}
 
+		if(d.get('queryResult').get('outputContexts')[0].get('parameters').get('documento.original') is None):
+			if(action=='action-saludo'):
+				resp['fulfillmentMessages'] = d.get('queryResult').get('fulfillmentMessages')
+				resp['fulfillmentMessages'][0]['text']['text'] = ['Hola! somos CIMA','Para poder comenzar necesitamos tu numero de documento']
+			else:
+				resp['fulfillmentText'] = 'Para poder comenzar necesitamos tu numero de documento'
+
+		else:
+			if(action=='action-documento'):
+				resp['fulfillmentText'] = 'Muy bien! Ahora cuentanos en que podemos ayudarte'
+				resp['outputContexts'] = d.get('queryResult').get('outputContexts')
+				resp['outputContexts'][0].get('parameters')['nombre'] = 'Diego'
+
+
+
+		#######################################################################################
 		if(action == 'action-numero-documento'):
 			ruc = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
 			resp = preventaCTL.verificarNumeroDocumento(ruc)
@@ -36,5 +53,4 @@ class Consult(Resource):
 			ruc = d.get('queryResult').get('outputContexts')[0].get('parameters').get('doc_number.original')
 			resp = preventaCTL.getEjecutiva(ruc)
 
-	
 		return  make_response(jsonify(resp))

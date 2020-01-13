@@ -1,3 +1,4 @@
 {
-	"python.pythonPath": "C:\\Users\\b36249\\AppData\\Local\\Continuum\\anaconda3-64\\python.exe"
+	"python.pythonPath": "C:\\Users\\b36249\\AppData\\Local\\Continuum\\anaconda3-64\\python.exe",
+	"python.jediEnabled": false
 }
