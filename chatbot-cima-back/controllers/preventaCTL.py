@@ -27,9 +27,9 @@ def verificarOferta(ruc):
 			#si ya tiene una cuenta 
 			usuario = db.engine.execute(query_registrado.replace('$RUC',ruc)).first()
 			if (usuario is not None):
-				msg = '¡¡Felicidades¡¡ Tienes un crédito esperando por ti. Ingresa a https://cima.pe/login con tu cuenta para que puedas aceptar la oferta para que podamos proceder con tu desembolso'
+				msg = '¡¡Felicidades¡¡ Tienes un crédito esperando por ti. Ingresa a: https://cima.pe/login, para que puedas ver las condiciones y aceptar tu oferta. '
 			else:
-				msg = '¡¡Felicidades¡¡ Tienes un crédito esperando por ti. Ingresa a Cima: https://cima.pe/credito-pos, regístrate y completa los pasos. El sistema te evaluará en línea y te mostrará las condiciones de tu crédito. De estar de acuerdo deberás aceptar la oferta para que podamos proceder con tu desembolso.'
+				msg = '¡¡Felicidades¡¡ Tienes un crédito esperando por ti. Ingresa tus datos en: https://cima.pe/credito-pos, para que puedas ver las condiciones y aceptar tu oferta. '
 		else:
 			#si no tiene ninguna oferta
 			msg = 'Por ahora no cuentas con una oferta vigente; sin embargo agradecemos el interés y te invitamos a revisar la información dentro de los próximos 30 días, ya que el sistema volverá a evaluarte  de forma automática según tus últimos flujos de venta con VISA.'
