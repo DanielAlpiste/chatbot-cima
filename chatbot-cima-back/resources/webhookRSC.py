@@ -110,6 +110,15 @@ class Consult(Resource):
 
 				#si ya estan seteados ambos, proceso como normalmente lo haria
 			else:
+
+				#pero no hay documento
+				if contexto is None or contexto.get('parameters').get('doc_number.original') is None:
+					resp['fulfillmentText'] = "Para poder comenzar primero necesitamos primero tu RUC o DNI"
+					return resp
+
+				#si no hay telefono
+				elif contexto.get('parameters').get('telefono.original') is None:
+					resp['fulfillmentText'] = 'Para darte una mejor atención también bríndanos tu número telefónico'
 				
 				if(action == 'action-oferta'):
 					resp = preventaCTL.verificarOferta(ruc)
