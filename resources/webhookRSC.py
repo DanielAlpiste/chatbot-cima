@@ -76,7 +76,7 @@ class Consult(Resource):
 
 				#pero no hay documento
 				if contexto is None or contexto.get('parameters').get('doc_number.original') is None:
-					resp['fulfillmentText'] = "Hola, Bienvenido a CIMA soy tu asistente virtual que te ayudará a obtener tu préstamo rápido y fácil. \u000A Para poder comenzar necesitamos primero tu RUC"
+					resp['fulfillmentText'] = "Hola, Bienvenido a CIMA soy tu asistente virtual que te ayudará a obtener tu préstamo rápido y fácil. \u000A Para poder comenzar necesitamos primero tu RUC (o en su defecto DNI)"
 
 				#si no hay telefono
 				elif contexto.get('parameters').get('telefono.original') is None:
