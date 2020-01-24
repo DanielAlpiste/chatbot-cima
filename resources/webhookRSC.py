@@ -38,14 +38,14 @@ class Consult(Resource):
 
 			#Si no hay contexto, osea no ha ingresado ni RUC/Telefono
 			if contexto is None:
-				resp['fulfillmentText'] = "El RUC que has ingresado no esta en formato correcto, recuerda que deben ser 11 u 8 dígitos. ¿Puedes ingresarlo nuevamente?"
+				resp['fulfillmentText'] = "El RUC que has ingresado no esta en formato correcto, recuerda que deben ser 11. ¿Puedes ingresarlo nuevamente?"
 				return resp
 
 			print(contexto.get('parameters'), file=sys.stdout)
 
 			#No hay RUC por lo tanto no lo ingreso correctamente
 			if (contexto.get('parameters') is None or contexto.get('parameters').get('doc_number.original') is None):
-				resp['fulfillmentText'] = 'El RUC que has ingresado no esta en formato correcto, recuerda que deben ser 11 u 8 dígitos. ¿Puedes ingresarlo nuevamente?'
+				resp['fulfillmentText'] = 'El RUC que has ingresado no esta en formato correcto, recuerda que deben ser 11. ¿Puedes ingresarlo nuevamente?'
 				return resp
 
 			#No hay Telefono por lo tanto no lo ingreso correctamente
@@ -76,7 +76,7 @@ class Consult(Resource):
 
 				#pero no hay documento
 				if contexto is None or contexto.get('parameters').get('doc_number.original') is None:
-					resp['fulfillmentText'] = "Hola, Bienvenido a CIMA soy tu asistente virtual que te ayudará a obtener tu préstamo rápido y fácil. \u000A Para poder comenzar necesitamos primero tu RUC (o en su defecto DNI)"
+					resp['fulfillmentText'] = "Hola, Bienvenido a CIMA soy tu asistente virtual que te ayudará a obtener tu préstamo rápido y fácil. \u000A Para poder comenzar necesitamos primero tu RUC"
 
 				#si no hay telefono
 				elif contexto.get('parameters').get('telefono.original') is None:
@@ -90,7 +90,7 @@ class Consult(Resource):
 
 				#pero no hay documento
 				if contexto is None or contexto.get('parameters').get('doc_number.original') is None:
-					resp['fulfillmentText'] = "Para poder comenzar primero necesitamos primero tu RUC o DNI"
+					resp['fulfillmentText'] = "Para poder comenzar primero necesitamos primero tu RUC"
 
 				#si no hay telefono
 				elif contexto.get('parameters').get('telefono.original') is None:

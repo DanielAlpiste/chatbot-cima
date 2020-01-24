@@ -43,9 +43,9 @@ def problemaInscripcion(ruc):
 
 	result = db.engine.execute(query_registrado.replace('$RUC',ruc)).first()
 	if (result is not None):
-		msg = 'Recuerda ingresar correctamente tu correo: ' + result['email'] + ' (sin espacios) desde el siguiente link: https://cima.pe/login. En caso no recuerdes tu contraseña deberás darle click a este link para que la puedas restaurar: https://cima.pe/forgot-password'
+		msg = 'Recuerda ingresar correctamente tu correo: ' + result['email'] + ' (sin espacios en blanco al final) desde el siguiente link: https://cima.pe/login. En caso no recuerdes tu contraseña deberás darle click a este link para que la puedas restaurar: https://cima.pe/forgot-password'
 	else:
-		msg = 'Al parecer no estas ingresando con el correo registrado en CIMA (' + result['email'] +'). Revisa que este sea el correo correcto (sin espacios). Caso contrario puedes registrarte desde https://cima.pe/credito-pos'
+		msg = 'Al parecer no estas ingresando con el correo registrado en CIMA (' + result['email'] +'). Revisa que este sea el correo correcto (sin espacios al final). Caso contrario puedes registrarte desde https://cima.pe/credito-pos'
 	
 	d = {}
 	d['fulfillmentText'] = msg
