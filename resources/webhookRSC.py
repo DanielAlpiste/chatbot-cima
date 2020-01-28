@@ -33,6 +33,10 @@ class Consult(Resource):
 		ruc = ''
 		telefono = ''
 
+		if (action == 'action-welcome'):
+			resp['fulfillmentText'] = "BIENVENIDO =)"
+			return resp
+
 		#Si no reconoce ninguna intencion
 		if (action == 'input.unknown'):
 
@@ -52,8 +56,7 @@ class Consult(Resource):
 			if (contexto.get('parameters').get('telefono.original') is None):
 				resp['fulfillmentText'] = 'El teléfono que has ingresado no esta en formato correcto, recuerda que deben ser 9 dígitos. ¿Puedes ingresarlo nuevamente?'
 				return resp
-
-			
+				
 			#Si es una intencion sin reconocer pero ya tiene el RUC y el telefono es porque no se entendio la consulta del cliente
 			
 			#Aumenta contador de errores a 1
@@ -135,6 +138,16 @@ class Consult(Resource):
 
 				if(action=='action-problema-proceso'):
 					resp = preventaCTL.problemaProceso(ruc)
+
+				if (action=='action-error-contacto-ejecutivo'):
+					resp = preventaCTL.getEjecutivaAyuda(ruc)
+
+				if (action=='action-oferta-mas-detalle'):
+					resp = preventaCTL.ofertaMasDetalle(ruc)
+				
+				if (action=='action-problema-login-error1'):
+					resp = preventaCTL.problemaLoginError(ruc)
+
 						
 
 		#######################################################################################		
