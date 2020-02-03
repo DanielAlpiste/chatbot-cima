@@ -9,8 +9,10 @@ from flask_restful import Api, Resource
 
 # *********** Resources *********** #
 from resources import webhookRSC
+from resources import apiDialogFlow
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
 
 api.add_resource(webhookRSC.Consult, '/webhook')
+api.add_resource(apiDialogFlow.Send, '/consult')

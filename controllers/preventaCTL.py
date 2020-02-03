@@ -46,7 +46,7 @@ def ofertaMasDetalle(ruc):
 	#si tiene una oferta aprobada
 	result = db.engine.execute(query_aprobado.replace('$RUC',ruc)).first()
 	if (result is not None):
-		msg = '(1) Primero ingresa a CIMA https://cima.pe/login con tu correo: ' + result['email'] + '(sin espacios al final). (2) Luego en tu pantalla principal verás la oferta que tenemos para ti'
+		msg = 'Para verificar tu oferta ten en cuenta los siguientes pasos: Primero ingresa a CIMA https://cima.pe/login con tu correo: ' + usuario['email'] + '(sin espacios al final) y contraseña con los cuales te registrarste y completa los datos solicitados (*)Si tienes problemas, intenta cerrando tu navegador e ingresando nuevamente'
 
 	else:
 		result = db.engine.execute(query_preaprobado.replace('$RUC',ruc)).first()
@@ -55,9 +55,9 @@ def ofertaMasDetalle(ruc):
 			#si ya tiene una cuenta 
 			usuario = db.engine.execute(query_registrado.replace('$RUC',ruc)).first()
 			if (usuario is not None):
-				msg = '(1) Primero ingresa a CIMA https://cima.pe/login con tu correo: ' + usuario['email'] + '(sin espacios al final) (2) Completa los datos de validación y en pantalla estarán las condiciones de tu oferta'
+				msg = 'Para verificar tu oferta ten en cuenta los siguientes pasos: Primero ingresa a CIMA https://cima.pe/login con tu correo: ' + usuario['email'] + '(sin espacios al final) y contraseña con los cuales te registrarste y completa los datos solicitados (*)Si tienes problemas, intenta cerrando tu navegador e ingresando nuevamente'
 			else:
-				msg = 'Al parecer no te has registrado en CIMA con tu RUC: ' + ruc + '. (1) Ingresa a https://cima.pe/credito-pos, completa todos los datos y dale clic al botón "VER OFERTA" (debajo del formulario)' +'(2) El sistema validará tu información y luego podrás ver la oferta que tenemos para tí'
+				msg = 'Al parecer aun no te has registrado en CIMA con tu RUC: ' + ruc + '. Por favor ingresa a https://cima.pe/credito-pos, completa tus datos y dale clic al boton "VER OFERTA" que está al final del formulario para comenzar'
 		else:
 			#si no tiene ninguna oferta
 			msg = 'Lo sentimos. Te invitamos a revisar la información dentro de los próximos 30 días, ya que el sistema volverá a evaluarte  de forma automática según tus últimos flujos de venta con VISA.'
@@ -73,7 +73,7 @@ def problemaInscripcion(ruc):
 	if (result is not None):
 		msg = 'Recuerda ingresar correctamente tu correo: ' + result['email'] + ' (sin espacios en blanco al final) desde el siguiente link: https://cima.pe/login. En caso no recuerdes tu contraseña deberás darle click a este link para que la puedas restaurar: https://cima.pe/forgot-password'
 	else:
-		msg = 'Al parecer no estas registrado en CIMA con tu RUC: ' + ruc + ' . Por favor ingresa a https://cima.pe/credito-pos, completa tus datos y dale clic a "VER OFERTA" para comenzar '
+		msg = 'Al parecer no estas registrado en CIMA con tu RUC: ' + ruc + ' . Por favor ingresa a https://cima.pe/credito-pos, completa tus datos y dale clic al boton "VER OFERTA" que está al final del formulario para comenzar '
 	
 	d = {}
 	d['fulfillmentText'] = msg
@@ -97,7 +97,7 @@ def problemaLoginError(ruc):
 
 	result = db.engine.execute(query_registrado.replace('$RUC',ruc)).first()
 	if (result is not None):
-		msg = 'Revisa nuevamente que tu correo: '+ result['email'] +' no tenga espacios al final. Este es el link para recuperar tu contraseña: https://cima.pe/forgot-password, si no te llega el correo de recuperación, revisa tu bandeja de spam o correo no deseado.'
+		msg = 'Revisa nuevamente que tu correo: '+ result['email'] +' no tenga espacios al final. Este es el link para recuperar tu contraseña: https://cima.pe/forgot-password, Recuerda que se te enviará un email a tu correo electrónico registrado, mediante el cual podrás realizar el cambio de contraseña. De no recibirlo en la bandeja de entrada, revisar la de no deseados (Toda esto deberá realizarce dentro de los 45 minutos desde que recibiste el correo).'
 	else:
 		msg = 'Al parecer sigues sin estar registrado en CIMA con tu RUC: ' + ruc + ' . Por favor ingresa correctamente tus datos en https://cima.pe/credito-pos y dale clic al boton "VER OFERTA" para continuar'
 	
@@ -112,7 +112,7 @@ def getEjecutiva(ruc):
 	if (result is not None):
 		msg = 'Puedes comunicarte con tu ejecutivo(a) ' + result['nombre_ejecutiva'].capitalize() + ' ' + result['apellido_ejecutiva'] + ' a este número: ' + result['telefono']
 	else:
-		msg = 'Hola, la comunicación es por este medio. Si necesitas mas información primero regístrate en https://cima.pe/credito-pos para comunicarte con uno de nuestros ejecutivos'
+		msg = 'Puedes registrarte en https://cima.pe/credito-pos para luego comunicarte con la ejecutiva que se te asignará.'
 	
 	d = {}
 	d['fulfillmentText'] = msg
