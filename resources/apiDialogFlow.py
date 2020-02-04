@@ -6,6 +6,7 @@ import commons
 from app import db
 import sys
 import dialogflow_v2
+import os
 
 
 from controllers import preventaCTL
@@ -27,6 +28,7 @@ class Send(Resource):
 
         
         client = dialogflow_v2.SessionsClient()
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/datascience/chatbot-cima/credentials/credentials_google_preventa_prod.json"
         session = client.session_path('cima-preventa-aenikt', hash(documento))
         query_input = {"text": {"text": mensaje,"language_code": "Spanish — es"}}
 
