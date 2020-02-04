@@ -27,7 +27,7 @@ class Send(Resource):
 
         
         client = dialogflow_v2.SessionsClient()
-        session = client.session_path('preventa-test-vbmamn', hash(documento))
+        session = client.session_path('cima-preventa-aenikt', hash(documento))
         query_input = {"text": {"text": mensaje,"language_code": "Spanish — es"}}
 
         response = client.detect_intent(session, query_input)

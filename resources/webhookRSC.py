@@ -33,10 +33,6 @@ class Consult(Resource):
 		ruc = ''
 		telefono = ''
 
-		if (action == 'action-welcome'):
-			resp['fulfillmentText'] = "BIENVENIDO =)"
-			return resp
-
 		#Si no reconoce ninguna intencion
 		if (action == 'input.unknown'):
 
