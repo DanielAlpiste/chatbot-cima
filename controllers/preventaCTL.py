@@ -136,7 +136,7 @@ def getEjecutiva(ruc):
 
 	result = db.engine.execute(query_ejecutiva.replace('$RUC',ruc)).first()
 	if (result is not None):
-		msg = 'Para cualquier consulta o duda podrás comunicarte con tu ejecutiva ' + result['nombre_ejecutiva'].capitalize() + ' ' + result['apellido_ejecutiva'] + ' a este número: ' + result['telefono']
+		msg = 'Para cualquier consulta o duda podrás comunicarte con tu ejecutiva ' + result['nombre_ejecutiva'].capitalize() + ' ' + result['apellido_ejecutiva'] + ' a este número: ' + result['telefono'] + '. Recuerda que nuestro horario de atención es de L-V de 9am a 6pm'
 	else:
 		msg = 'Para cualquier consulta o duda podrás comunicarte al siguiente buzón: cima.interbank@intercorp.com.pe'
 	
@@ -149,9 +149,9 @@ def getEjecutivaAyuda(ruc):
 
 	result = db.engine.execute(query_ejecutiva.replace('$RUC',ruc)).first()
 	if (result is not None):
-		msg = '¡Entendido! En breves momentos tu ejecutiva ' + result['nombre_ejecutiva'].capitalize() + ' ' + result['apellido_ejecutiva'] + ' se comunicará contigo para ayudarte con tu problema. Recuerda que nuestro horario de atención es de 9am a 6pm'
+		msg = '¡Entendido! En breves momentos tu ejecutiva ' + result['nombre_ejecutiva'].capitalize() + ' ' + result['apellido_ejecutiva'] + ' se comunicará contigo para ayudarte con tu problema. Recuerda que nuestro horario de atención es de L a V de 9am a 6pm'
 	else:
-		msg = '¡Entendido! En breves momentos nos comunicaremos contigo para ayudarte con tu problema. Recuerda que nuestro horario de atención es de 9am a 6pm'
+		msg = '¡Entendido! En breves momentos nos comunicaremos contigo para ayudarte con tu problema. Recuerda que nuestro horario de atención es de L a V de 9am a 6pm'
 	
 	d = {}
 	d['fulfillmentText'] = msg
