@@ -16,7 +16,11 @@ def verificarOferta(ruc):
 	query_registrado = "SELECT b.document_type AS 'tipo_documento',b.document_number AS 'nro_documento',a.email FROM business b JOIN account_business ab on ab.business_id = b.id JOIN account a on a.id = ab.account_id JOIN user u on a.user_id = u.id WHERE document_number = '$RUC'"
 
 	#si tiene una oferta aprobada
+
 	result = db.engine.execute(query_aprobado.replace('$RUC',ruc)).first()
+	msg = ''
+	msgs = []
+
 	if (result is not None):
 		msg = '¡Felicitaciones! Cuentas con una oferta de hasta S/.' + str(round(result['oferta_maxima'])) + ' . Ingresa a https://cima.pe/login para realizar tu desembolso'
 
@@ -29,7 +33,8 @@ def verificarOferta(ruc):
 			if (usuario is not None):
 				msg = '¡¡Felicidades¡¡ Tienes un crédito esperando por ti. Ingresa a: https://cima.pe/login, para que puedas ver las condiciones y aceptar tu oferta. '
 			else:
-				msg = '¡¡Felicidades¡¡ Tienes un crédito esperando por ti. Ingresa tus datos en: https://cima.pe/credito-pos, para que puedas ver las condiciones y aceptar tu oferta. '
+				msg = '¡¡Felicidades¡¡ Tienes un crédito esperando por ti. Ingresa tus datos en: https://cima.pe/credito-pos, para que puedas ver las condiciones y aceptar tu oferta.'
+				
 		else:
 			#si no tiene ninguna oferta
 			msg = 'Por ahora no cuentas con una oferta vigente; sin embargo agradecemos el interés y te invitamos a revisar la información dentro de los próximos 30 días, ya que el sistema volverá a evaluarte  de forma automática según tus últimos flujos de venta con VISA.'
@@ -43,6 +48,8 @@ def ofertaMasDetalle(ruc):
 	query_preaprobado = "SELECT ruc AS 'nro_documento', business_name AS 'razon_social',suitable AS 'pre_califica', final_rate AS 'tasa_interes' FROM ibk_data WHERE ruc = '$RUC';"
 	query_registrado = "SELECT b.document_type AS 'tipo_documento',b.document_number AS 'nro_documento',a.email FROM business b JOIN account_business ab on ab.business_id = b.id JOIN account a on a.id = ab.account_id JOIN user u on a.user_id = u.id WHERE document_number = '$RUC'"
 
+	msgs = []
+	
 	#si tiene una oferta aprobada
 	result = db.engine.execute(query_aprobado.replace('$RUC',ruc)).first()
 	if (result is not None):
@@ -55,14 +62,25 @@ def ofertaMasDetalle(ruc):
 			#si ya tiene una cuenta 
 			usuario = db.engine.execute(query_registrado.replace('$RUC',ruc)).first()
 			if (usuario is not None):
-				msg = 'Para verificar tu oferta ten en cuenta los siguientes pasos: Primero ingresa a CIMA https://cima.pe/login con tu correo: ' + usuario['email'] + '(sin espacios al final) y contraseña con los cuales te registrarste y completa los datos solicitados (*)Si tienes problemas, intenta cerrando tu navegador e ingresando nuevamente'
+				msg = 'Para verificar tu oferta ten en cuenta los siguientes pasos: Primero ingresa a CIMA https://cima.pe/login con tu correo: ' + usuario['email'] + '(sin espacios al final) y contraseña con los cuales te registraste y completa los datos solicitados (*)Si tienes problemas, intenta cerrando tu navegador e ingresando nuevamente'
+				#msgs = [
+				#	'Primero ingresa a CIMA https://cima.pe/login con tu correo: ' + usuario['email'] + '(sin espacios al final) y contraseña con los cuales te registraste y completa los datos solicitados'
+				#	'Luego en la sección de oferta puedes agregar '
+				#]
 			else:
 				msg = 'Al parecer aun no te has registrado en CIMA con tu RUC: ' + ruc + '. Por favor ingresa a https://cima.pe/credito-pos, completa tus datos y dale clic al boton "VER OFERTA" que está al final del formulario para comenzar'
+				#msgs = [
+				#	'Al parecer aun no te has registrado en CIMA con tu RUC: ' + ruc,
+				#	'Primero ingresa a: <a href="https://cima.pe/credito-pos">https://cima.pe/credito-pos</a>',
+				#	'Luego en el formulario completa tus datos: RUC, Email (sin espacios en blanco al final), Telefono, Contraseña y Check de VISA',
+				#	'Finalmente da clic al boton "VER OFERTA" que se encuentra debajo del formulario'
+				#]
 		else:
 			#si no tiene ninguna oferta
 			msg = 'Lo sentimos. Te invitamos a revisar la información dentro de los próximos 30 días, ya que el sistema volverá a evaluarte  de forma automática según tus últimos flujos de venta con VISA.'
 	
 	d = {}
+	d['fulfillmentMessages'] = [{"text": { "text" : msgs}}]
 	d['fulfillmentText'] = msg
 	return d
 

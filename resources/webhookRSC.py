@@ -6,8 +6,9 @@ import commons
 from app import db
 import sys
 
-
 from controllers import preventaCTL
+from controllers import chatbotConversationCTL
+from controllers import notificacionCTL
 
 class Consult(Resource):
 
@@ -21,6 +22,7 @@ class Consult(Resource):
 
 	def post(self):
 
+
 		d = request.get_json(force=True)
 		if not d:
 			response = {'user': 'No input data provided'}
@@ -29,47 +31,41 @@ class Consult(Resource):
 		action = d.get('queryResult').get('action')
 		contexto = self.getContexto(d.get('queryResult').get('outputContexts'))
 
+		conversacion = d.get('session')
+		intencion = d.get('queryResult').get('intent').get('displayName')
+		pregunta = d.get('queryResult').get('queryText')
+
 		resp = {}
+		resp['fulfillmentText'] = d.get('queryResult').get('fulfillmentText')
 		ruc = ''
 		telefono = ''
+		notificar = False
 
 		#Si no reconoce ninguna intencion
 		if (action == 'input.unknown'):
 
-			#Si no hay contexto, osea no ha ingresado ni RUC/Telefono
-			if contexto is None:
-				resp['fulfillmentText'] = "El RUC que has ingresado no esta en formato correcto, recuerda que deben ser 11. ¿Puedes ingresarlo nuevamente?"
-				return resp
-
-			print(contexto.get('parameters'), file=sys.stdout)
-
-			#No hay RUC por lo tanto no lo ingreso correctamente
-			if (contexto.get('parameters') is None or contexto.get('parameters').get('doc_number.original') is None):
+			#No hay RUC por lo tanto no lo ingresó correctamente
+			if (contexto is None or contexto.get('parameters') is None or contexto.get('parameters').get('doc_number.original') is None):
 				resp['fulfillmentText'] = 'El RUC que has ingresado no esta en formato correcto, recuerda que deben ser 11. ¿Puedes ingresarlo nuevamente?'
-				return resp
-
 			#No hay Telefono por lo tanto no lo ingreso correctamente
-			if (contexto.get('parameters').get('telefono.original') is None):
+			elif (contexto.get('parameters').get('telefono.original') is None):
 				resp['fulfillmentText'] = 'El teléfono que has ingresado no esta en formato correcto, recuerda que deben ser 9 dígitos. ¿Puedes ingresarlo nuevamente?'
-				return resp
-				
-			#Si es una intencion sin reconocer pero ya tiene el RUC y el telefono es porque no se entendio la consulta del cliente
 			
-			#Aumenta contador de errores a 1
-			if(contexto.get('parameters').get('error') is None):
+			#Tiene los datos de RUC y Telefono pero no reconocio intención (contador 1)
+			elif (contexto.get('parameters').get('error') is None):
+				ruc = contexto.get('parameters').get('doc_number.original')
 				resp['outputContexts'] = [contexto]
 				resp['outputContexts'][0].get('parameters')['error'] = 1
 				resp['fulfillmentText'] = 'Creo que no entendí tu consulta, ¿Puedes decirla de otra manera?'
-				return resp
-			
-			#en el contador de errores a 2
-			if(contexto.get('parameters')['error'] == 1):
+
+			#Tiene los datos de RUC y Telefono pero no reconocio intención (contador 2)
+			elif(contexto.get('parameters')['error'] == 1):
+				ruc = contexto.get('parameters').get('doc_number.original')
 				resp['fulfillmentText'] = 'Lo sentimos parece que no podemos resolver tu duda por este medio. Una ejecutiva de negocio se estará comunicando contigo a tu telefono en la brevedad posible'
-				return resp
+				notificar = True
 
 		#si hay alguna intencion reconocida
 		else:
-
 			#si me saluda 
 			if(action=='action-saludo'):
 
@@ -106,46 +102,58 @@ class Consult(Resource):
 						resp['outputContexts'][0].get('parameters')['razon_social'] = persona['razon_social'].title()
 						resp['outputContexts'][0].get('parameters')['tasa'] = persona['tasa']
 
-				#si ya estan seteados ambos, proceso como normalmente lo haria
+			#si ya estan seteados ambos, proceso como normalmente lo haria
 			else:
 
 				#pero no hay documento
 				if contexto is None or contexto.get('parameters').get('doc_number.original') is None:
 					resp['fulfillmentText'] = "Para poder comenzar primero necesitamos primero tu RUC"
-					return resp
 
 				#si no hay telefono
 				elif contexto.get('parameters').get('telefono.original') is None:
 					resp['fulfillmentText'] = 'Para darte una mejor atención también bríndanos tu número telefónico'
 				
-				ruc = contexto.get('parameters').get('doc_number.original')
+				#Si todo va en orden
+				else:
+					ruc = contexto.get('parameters').get('doc_number.original')
 
-				if(action == 'action-oferta'):
-					resp = preventaCTL.verificarOferta(ruc)
+					if(action == 'action-oferta'):
+						resp = preventaCTL.verificarOferta(ruc)
 
-				if(action=='action-problema-inscripcion'):
-					resp = preventaCTL.problemaInscripcion(ruc)
+					if(action=='action-problema-inscripcion'):
+						resp = preventaCTL.problemaInscripcion(ruc)
 
-				if(action=='action-problema-login'):
-					resp = preventaCTL.problemaLogin(ruc)
+					if(action=='action-problema-login'):
+						resp = preventaCTL.problemaLogin(ruc)
 
-				if(action=='action-numero-telefonico'):
-					resp = preventaCTL.getEjecutiva(ruc)
+					if(action=='action-numero-telefonico'):
+						resp = preventaCTL.getEjecutiva(ruc)
 
-				if(action=='action-problema-proceso'):
-					resp = preventaCTL.problemaProceso(ruc)
+					if(action=='action-problema-proceso'):
+						resp = preventaCTL.problemaProceso(ruc)
 
-				if (action=='action-error-contacto-ejecutivo'):
-					resp = preventaCTL.getEjecutivaAyuda(ruc)
+					if (action=='action-error-contacto-ejecutivo'):
+						resp = preventaCTL.getEjecutivaAyuda(ruc)
+						notificar = True
 
-				if (action=='action-oferta-mas-detalle'):
-					resp = preventaCTL.ofertaMasDetalle(ruc)
-				
-				if (action=='action-problema-login-error1'):
-					resp = preventaCTL.problemaLoginError(ruc)
+					if (action=='action-oferta-mas-detalle'):
+						resp = preventaCTL.ofertaMasDetalle(ruc)
+					
+					if (action=='action-problema-login-error1'):
+						resp = preventaCTL.problemaLoginError(ruc)
+
+					if (action in ['action-post-estado-cuota','action-post-estado-retencion']):
+						notificar = True
+
 
 						
 
 		#######################################################################################		
+		#Guardando conversacion en Base de Datos
+		
+		respuesta = resp['fulfillmentText']
+		chatbotConversationCTL.insert(conversacion,ruc,pregunta,intencion,respuesta)
+		if notificar:
+			notificacionCTL.enviar(conversacion,ruc,action)
 
-		return  make_response(jsonify(resp))
+		return make_response(jsonify(resp))

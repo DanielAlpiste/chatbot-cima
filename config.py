@@ -17,7 +17,23 @@ PAGINATION_PAGE_SIZE = 5
 """
 
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://usuario_consulta:nBw4mT3bpTsXUb2W@35.226.45.124:3306/cima_prod_db'
+SQLALCHEMY_BINDS = {
+    #'datascience': 'mysql+pymysql://chatbot:9KwKSRCq2be74WhPWTRq@108.59.81.200:3306/ibk-data-science'
+    'datascience': 'mysql+pymysql://diego:Febrero2020@localhost:3306/cima'
+}
+
 #SQLALCHEMY_POOL_SIZE = 5
 #SQLALCHEMY_POOL_TIMEOUT = 30
 #SQLALCHEMY_POOL_RECYCLE = 31
 #SQLALCHEMY_TRACK_MODIFICATIONS  = False
+
+
+#DIALOGFLOW_CREDENTIALS = '/home/datascience/chatbot-cima/credentials/credentials_google_preventa_prod.json'
+#DIALOGFLOW_PROJECT = 'cima-preventa-aenikt'
+
+DIALOGFLOW_CREDENTIALS = 'C:\\Users\\B34300\\Desktop\\chatbot_app\\aceleraton\\produccion\\chatbot-cima-pre\\credentials\\credentials_google_preventa_pre.json'
+DIALOGFLOW_PROJECT = 'preventa-test-vbmamn'
+
+MAIL_URL = 'https://api.sendgrid.com/v3/mail/send'
+MAIL_TOKEN = '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'
+MAIL_RECEIPT = 'dlopezp@intercorp.com.pe'

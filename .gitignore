@@ -16,6 +16,7 @@ _mailinglist
 .idea/
 docs/_build/
 ngrok.exe
+config.py
 
 # Coverage reports
 htmlcov/
