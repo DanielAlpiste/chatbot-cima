@@ -61,7 +61,7 @@ class Consult(Resource):
 			#Tiene los datos de RUC y Telefono pero no reconocio intención (contador 2)
 			elif(contexto.get('parameters')['error'] == 1):
 				ruc = contexto.get('parameters').get('doc_number.original')
-				resp['fulfillmentText'] = 'Lo sentimos parece que no podemos resolver tu duda por este medio. Una ejecutiva de negocio se estará comunicando contigo a tu telefono en la brevedad posible'
+				resp['fulfillmentText'] = 'Lo sentimos parece que no podemos resolver tu duda por este medio. Una ejecutiva de negocio se estará comunicando contigo en la brevedad posible. Recuerda que nuestro horario de atención es de L-V de 9am a 6pm'
 				notificar = True
 
 		#si hay alguna intencion reconocida
@@ -142,10 +142,12 @@ class Consult(Resource):
 					if (action=='action-problema-login-error1'):
 						resp = preventaCTL.problemaLoginError(ruc)
 
+					if (action=='action-sobre-desembolso'):
+						resp = preventaCTL.sobreDesembolso(ruc)
+
 					if (action in ['action-post-estado-cuota','action-post-estado-retencion']):
+						resp = preventaCTL.soportePostventa(ruc)
 						notificar = True
-
-
 						
 
 		#######################################################################################		

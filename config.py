@@ -18,7 +18,6 @@ PAGINATION_PAGE_SIZE = 5
 
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://usuario_consulta:nBw4mT3bpTsXUb2W@35.226.45.124:3306/cima_prod_db'
 SQLALCHEMY_BINDS = {
-    #'datascience': 'mysql+pymysql://chatbot:9KwKSRCq2be74WhPWTRq@108.59.81.200:3306/ibk-data-science'
     'datascience': 'mysql+pymysql://diego:Febrero2020@localhost:3306/cima'
 }
 

@@ -2,7 +2,7 @@ import status
 import requests
 from app import db
 from flask import current_app
-from datetime import datetime
+from datetime import datetime,timedelta
 import json
 
 from models.chatbotConversation import ChatbotConversation
@@ -10,13 +10,16 @@ from models.chatbotConversation import ChatbotConversation
 def enviar(conversacion,ruc,accion):
 
     if accion == 'input.unknown':
-        body = '<p>El bot no pudo reconocer la siguiente conversacion con el cliente ' + ruc +'</p>'
+        body = '<p>El bot no pudo reconocer la siguiente conversación con el cliente ' + ruc +'</p>'
     elif accion in ['action-post-estado-cuota','action-post-estado-retencion']:
-        body = '<p>El cliente requiere informacion sobre sus retenciones/cuotas:  ' + ruc + '</p>'
+        body = '<p>El cliente requiere información sobre sus retenciones/cuotas:  ' + ruc + '</p>'
     elif accion == 'action-error-contacto-ejecutivo':
         body = '<p>El cliente no pudo completar su tarea:  ' + ruc + '</p>'
 
-    conversa = ChatbotConversation.query.filter(ChatbotConversation.conversacion == conversacion).all()
+    conversa = ChatbotConversation.query.filter(ChatbotConversation.conversacion == conversacion). \
+            filter(ChatbotConversation.fecha >= (datetime.now() - timedelta(minutes=15))) .\
+            all()
+    
     for c in conversa:
         body += '<br><b>Cliente: </b>' + c.pregunta
         body += '<br><b>CIMA: </b>' + c.respuesta
