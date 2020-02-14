@@ -8,7 +8,7 @@ def queryRegistrado():
 	return "SELECT b.document_type AS 'tipo_documento',b.document_number AS 'nro_documento',a.email FROM business b JOIN account_business ab on ab.business_id = b.id JOIN account a on a.id = ab.account_id JOIN user u on a.user_id = u.id WHERE document_number = '$RUC'"
 
 def queryPreaprobado():
-	return "SELECT ruc AS 'nro_documento', business_name AS 'razon_social',suitable AS 'pre_califica', final_rate AS 'tasa_interes' FROM ibk_data WHERE ruc = '$RUC'"
+	return "SELECT ruc AS 'nro_documento', business_name AS 'razon_social',suitable AS 'pre_califica', final_rate AS 'tasa_interes' FROM ibk_data WHERE suitable = '1' AND ruc = '$RUC'"
 
 def queryAprobado():
 	return "SELECT bs.document_number AS 'nro_documento', clo.period_in_months AS 'numero_cuotas_maxima', clo.withholding AS 'porcentaje_retencion', clo.base_interest_rate AS 'tasa_interes', clo.monthly_fee AS 'cuota_mensual_maxima',clo.maximum_capital_amount AS 'oferta_maxima' FROM business bs JOIN catalog ca ON bs.id = ca.business_id JOIN catalog_item ci ON ca.id = ci.catalog_id JOIN offer clo  ON ci.id = clo.catalog_item_id WHERE bs.document_number = '$RUC' AND clo.status ='OFFERED' ORDER BY clo.created_date ASC LIMIT 1"
@@ -25,28 +25,23 @@ def verificarNumeroDocumento(ruc):
 	return persona
 
 def verificarOferta(ruc):
-	
-	result = db.engine.execute(queryAprobado().replace('$RUC',ruc)).first()
 	msg = ''
 	msgs = []
-
-	#si tiene una oferta aprobada
-	if (result is not None):
-		msg = '¡Felicitaciones! Cuentas con una oferta de hasta S/.' + str(round(result['oferta_maxima'])) + ' . Ingresa a https://cima.pe/login para realizar tu desembolso'
-
+	
+	usuario = db.engine.execute(queryRegistrado().replace('$RUC',ruc)).first()
+	#si usuario esta registrado
+	if (usuario is not None):
+		result = db.engine.execute(queryAprobado().replace('$RUC',ruc)).first()
+		if (result is not None):
+			msg = '¡Felicitaciones! Cuentas con una oferta de hasta S/.' + str(round(result['oferta_maxima'])) + ' . Ingresa a https://cima.pe/login para realizar tu desembolso'
+		else:
+			msg = 'Por ahora no cuentas con una oferta en CIMA, es probable que no hayas cumplido alguno de los requerimientos durante la evaluación. Te invitamos a revisar la información dentro de los próximos 30 días, ya que el sistema volverá a evaluarte  de forma automática según tus últimos flujos de venta con VISA'
 	else:
 		result = db.engine.execute(queryPreaprobado().replace('$RUC',ruc)).first()
-		#si tiene una oferta preaprobada
+		#si usuario tiene una oferta preaprobada
 		if (result is not None):
-			#si ya tiene una cuenta 
-			usuario = db.engine.execute(queryRegistrado().replace('$RUC',ruc)).first()
-			if (usuario is not None):
-				msg = '¡¡Felicidades¡¡ Tienes un crédito esperando por ti. Ingresa a: https://cima.pe/login, para que puedas ver las condiciones y aceptar tu oferta. '
-			else:
-				msg = '¡¡Felicidades¡¡ Tienes un crédito esperando por ti. Ingresa tus datos en: https://cima.pe/credito-pos, para que puedas ver las condiciones y aceptar tu oferta.'
-				
+			msg = '¡¡Felicidades¡¡ Tienes un crédito esperando por ti. Ingresa a: https://cima.pe/login, para que puedas ver las condiciones y aceptar tu oferta.'
 		else:
-			#si no tiene ninguna oferta
 			msg = 'Por ahora no cuentas con una oferta vigente; sin embargo agradecemos el interés y te invitamos a revisar la información dentro de los próximos 30 días, ya que el sistema volverá a evaluarte  de forma automática según tus últimos flujos de venta con VISA.'
 	
 	d = {}
@@ -63,7 +58,7 @@ def ofertaMasDetalle(ruc):
 		if (result is not None):
 			msg = 'Para verificar tu oferta ten en cuenta los siguientes pasos: Primero ingresa a CIMA https://cima.pe/login con tu correo: ' + usuario['email'] + '(sin espacios al final) y contraseña con los cuales te registrarste y completa los datos solicitados (*)Si tienes problemas, intenta cerrando tu navegador e ingresando nuevamente'
 		else:
-			msg = 'Por ahora no cuentas con una oferta en CIMA, es probable que no hayas cumplido alguno de los requerimientos. Te invitamos a revisar la información dentro de los próximos 30 días, ya que el sistema volverá a evaluarte  de forma automática según tus últimos flujos de venta con VISA'
+			msg = 'Por ahora no cuentas con una oferta en CIMA, es probable que no hayas cumplido alguno de los requerimientos durante la evaluación. Te invitamos a revisar la información dentro de los próximos 30 días, ya que el sistema volverá a evaluarte  de forma automática según tus últimos flujos de venta con VISA'
 	else:
 		msg = 'Al parecer aun no te has registrado en CIMA con tu RUC: ' + ruc + '. Por favor ingresa a https://cima.pe/credito-pos, llena el formulario con tus datos: RUC, correo (SIN ESPACIOS AL FINAL), celular y dale clic al boton "VER OFERTA" que está al final del formulario para comenzar'
 
@@ -108,8 +103,8 @@ def problemaLoginError(ruc):
 
 def getEjecutiva(ruc):
 	result = db.engine.execute(queryEjecutiva().replace('$RUC',ruc)).first()
-	if (result is not None):
-		msg = 'Puedes comunicarte con tu ejecutivo(a) ' + result['nombre_ejecutiva'].capitalize() + ' ' + result['apellido_ejecutiva'] + ' a este número: ' + result['telefono']
+	if (result is not None and result['nombre_ejecutiva'] is not None):
+		msg = 'Puedes comunicarte con tu ejecutivo(a) ' + result['nombre_ejecutiva'].capitalize() + ' ' + result['apellido_ejecutiva'] + ' a este número: ' + result['telefono'] + '. Escríbele y te responderá en el transcurso del día. Recuerda que nuestro horario de atención es de L a V de 9am a 6pm'
 	else:
 		msg = 'Puedes registrarte en https://cima.pe/credito-pos para luego comunicarte con la ejecutiva que se te asignará.'
 	
@@ -119,7 +114,7 @@ def getEjecutiva(ruc):
 
 def getEjecutivaAyuda(ruc):
 	result = db.engine.execute(queryEjecutiva().replace('$RUC',ruc)).first()
-	if (result is not None):
+	if (result is not None and result['nombre_ejecutiva'] is not None):
 		msg = '¡Entendido! En breves momentos tu ejecutiva ' + result['nombre_ejecutiva'].capitalize() + ' ' + result['apellido_ejecutiva'] + ' se comunicará contigo para ayudarte con tu problema. Recuerda que nuestro horario de atención es de L a V de 9am a 6pm'
 	else:
 		msg = '¡Entendido! En breves momentos nos comunicaremos contigo para ayudarte con tu problema. Recuerda que nuestro horario de atención es de L a V de 9am a 6pm'
@@ -142,11 +137,10 @@ def problemaProceso(ruc):
 
 def soportePostventa(ruc):
 	result = db.engine.execute(queryEjecutiva().replace('$RUC',ruc)).first()
-	print(result)
-	if (result is None):
+	if (result is None or result['nombre_ejecutiva'] is None):
 		msg = 'Recuerda que los detalles de tus retenciones y cuotas los puedes ver ingresando a CIMA: https://cima.pe/login con el correo y contraseña que te registraste.'
 	else:
-		msg = 'Recuerda que los detalles de tus retenciones y cuotas los puedes ver ingresando a CIMA: <a href="https://cima.pe/login">https://cima.pe/login</a> con el correo y contraseña que te registraste. Si necesitas algún detalle adicional comunícate con tu ejecutiva ' + result['nombre_ejecutiva'] + ' ' + result['apellido_ejecutiva'] + ' a este número: ' + result['telefono']
+		msg = 'Recuerda que los detalles de tus retenciones y cuotas los puedes ver ingresando a CIMA: https://cima.pe/login con el correo y contraseña que te registraste. Si necesitas algún detalle adicional comunícate con tu ejecutiva ' + result['nombre_ejecutiva'] + ' ' + result['apellido_ejecutiva'] + ' a este número: ' + result['telefono']
 	d = {}
 	d['fulfillmentText'] = msg
 	return d
