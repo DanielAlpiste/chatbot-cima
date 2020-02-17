@@ -147,10 +147,10 @@ def soportePostventa(ruc):
 
 def sobreDesembolso(ruc):
 
-	if (ruc[2:] == '10'):
-		msg = 'Para tu caso (Persona Natural) de no contar con una cuenta en Interbank, se te abrirá una cuenta negocios al momento del desembolso.'
-	else:
+	if (ruc[2:] == '20' and len(ruc) == 11):
 		msg = 'Para tu caso (Persona Jurídica) de no contar con una cuenta en Interbank a nombre de la empresa deberás abrir una cuenta negocios a nombre de la misma. Puedes hacerlo en la web de Interbank: https://interbank.pe/negocios'
+	else:
+		msg = 'Para tu caso (Persona Natural) de no contar con una cuenta en Interbank, se te abrirá una cuenta negocios al momento del desembolso.'
 	
 	d = {}
 	d['fulfillmentText'] = msg

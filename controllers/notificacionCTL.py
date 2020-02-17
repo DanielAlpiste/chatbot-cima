@@ -26,7 +26,7 @@ def enviar(conversacion,ruc,accion):
 
 
     data = {}
-    data['personalizations'] = [{'to': [{"email": current_app.config['MAIL_RECEIPT']}]}]
+    data['personalizations'] = [{'to': current_app.config['MAIL_RECEIPT']}]
     data['from'] = {"email": "chatbot@cima.pe"}
     data['subject'] = "Chatbot Cima  - Conversación"
     data['content'] = [{"type": "text/html","value": body}]
