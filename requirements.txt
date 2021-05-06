@@ -14,7 +14,7 @@ configobj==5.0.6
 cryptography==2.6.1
 cycler==0.10.0
 Flask==1.0.2
-Flask-Cors==3.0.7
+Flask-Cors==3.0.9
 Flask-HTTPAuth==3.3.0
 Flask-Login==0.4.1
 flask-marshmallow==0.10.1
