@@ -42,7 +42,7 @@ mysqlclient==1.4.2
 netifaces==0.10.4
 numpy==1.16.4
 pandas==0.24.2
-paramiko==2.4.2
+paramiko==2.10.1
 passlib==1.7.1
 password-strength==0.0.3.post2
 pexpect==4.2.1
