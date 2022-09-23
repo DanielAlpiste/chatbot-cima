@@ -47,7 +47,7 @@ passlib==1.7.1
 password-strength==0.0.3.post2
 pexpect==4.2.1
 Pillow==5.1.0
-protobuf==3.7.1
+protobuf==3.18.3
 psutil==5.4.2
 ptyprocess==0.6.0
 pyasn1==0.4.5
